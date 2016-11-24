@@ -5,17 +5,18 @@ import sqlite3
 import re
 connection = sqlite3.connect("sensor.db")
 cursor = connection.cursor()
-#only execute the below if sensor.db does not exist
-##command = """
-##CREATE TABLE data (
-##entry INTEGER PRIMARY KEY,
-##time DATE,
-##temperature_C INTEGER,
-##humidity INTEGER);"""
-##cursor.execute(command)
-##cursor.execute("SELECT * FROM data")
-##for i in cursor.fetchall():
-##    print(i)
+
+#If the database exists, the following code won't make a new one
+command = """
+CREATE TABLE IF NOT EXISTS data (
+entry INTEGER PRIMARY KEY,
+time DATE,
+temperature_C INTEGER,
+humidity INTEGER);"""
+cursor.execute(command)
+cursor.execute("SELECT * FROM data")
+for i in cursor.fetchall():
+    print(i)
 while True:
     s = str(input())
     s = s.replace("{", "")
@@ -37,5 +38,6 @@ while True:
     cursor.execute(command)
     connection.commit()
 connection.close()
+cursor.close()
 
 
