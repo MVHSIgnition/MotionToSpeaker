@@ -16,9 +16,7 @@ time DATE,
 temperature_C INTEGER,
 humidity INTEGER);"""
 cursor.execute(command)
-print("How many times would you like this sensor to run?")
-times = int(input())
-for i in range(0, 3*times):
+for i in range(0, 15):
     s = str(input())
     s = s.replace("{", "")
     s = s.replace("}", "")
