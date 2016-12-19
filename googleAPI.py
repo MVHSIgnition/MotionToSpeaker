@@ -11,6 +11,11 @@ from oauth2client import tools
 from oauth2client.file import Storage
 
 import datetime
+import time
+from pprint import pprint
+import requests 
+import re
+numbers = re.compile('\d+(?:\.\d+)?')
 
 try:
     import argparse
@@ -53,11 +58,6 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-from pprint import pprint
-import requests 
-
-import re
-numbers = re.compile('\d+(?:\.\d+)?')
 def main():
     """Shows basic usage of the Google Calendar API.
 
@@ -68,12 +68,19 @@ def main():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
 
-    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    print('Getting the upcoming 10 events')
+    now_utc = datetime.datetime.utcnow().isoformat() + 'Z'
+    now = datetime.datetime.now().isoformat().split('.')[0]# + '+00:00' #+ 'Z' # 'Z' indicates UTC time
+    endOfToday = now.replace(now.split('T')[1], '23:59:59')
+
+    endOfToday_utc = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(time.mktime(time.strptime(endOfToday, "%Y-%m-%dT%H:%M:%S")))) + 'Z'
+    
+    print(now_utc)
+    print(endOfToday_utc)
+    print("Getting today's events...")
     eventsResult = service.events().list(
-        calendarId='primary', timeMin=now, maxResults=10, singleEvents=True,
+        calendarId='primary', timeMin=now_utc, timeMax=endOfToday_utc, singleEvents=True,
         orderBy='startTime').execute()
-    pprint(eventsResult)
+    #pprint(eventsResult)
     events = eventsResult.get('items', [])
 
     if not events:
@@ -81,15 +88,16 @@ def main():
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date')).split('T')
         date = start[0]
-        time = int(start[1].split('-')[0].split(':')[0])
-        time -= time % 3
+        event_time = start[1].split('-')[0]
+##        time = int(start[1].split('-')[0].split(':')[0])
+##        time -= time % 3
         zipcode = numbers.findall(event['location'])[-1] #find last number in the string (zipcode)
         city = event['location'].split(',')[1].strip()
         country = event['location'].split(',')[-1].strip() #find last
         
         print('title:', event['summary'])
         print('date:', date)
-        print('time:', time)
+        print('time:', event_time)
         print('location:', event['location'])
         print('zipcode:', zipcode)
         print('city:', city)
