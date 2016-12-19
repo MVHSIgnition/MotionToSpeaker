@@ -1,3 +1,6 @@
+#IMPORTANT: Need to run "pip install --upgrade google-api-python-client"
+#           To get all the required modules
+
 from __future__ import print_function
 import httplib2
 import os
@@ -94,19 +97,34 @@ def main():
         print('\n')
 
         try:
-            r = requests.get('http://api.openweathermap.org/data/2.5/forecast?q=' + city + ',' + country + '&mode=json&appid=93e7e9c55f90dbee5bb418ca0c517d19')
+            r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=' + city + ',' + country + '&mode=json&units=imperial&appid=93e7e9c55f90dbee5bb418ca0c517d19')
         except:
-            print('Error loading weather data!')
-            continue
+            try:
+                r = requests.get('http://api.openweathermap.org/data/2.5/weather?zip=' + zipcode + ',' + country + '&mode=json&units=imperial&appid=93e7e9c55f90dbee5bb418ca0c517d19')
+            except:
+                print('Error loading weather data!')
+                continue
 
-        weather_data = r.json().get('list')
-        for d in weather_data:
-            if str(time) in d['dt_txt']: #fix because only does the most recent date
-                print('temp_max:', d['main']['temp_max'])
-                print('temp_min:', d['main']['temp_min'])
-                break
+        #below is if url is "data/2.5/forecast?" (forecasted data, can get for specific times in the future)
+##        weather_data = r.json().get('list')
+##        for d in weather_data:
+##            if str(time) in d['dt_txt']: #fix because only does the most recent date
+##                print(d['dt_txt'])
+##                print('temp_max:', d['main']['temp_max'])
+##                print('temp_min:', d['main']['temp_min'])
+##                break
+
+        #below is if url is "data/2.5/weather?" (current data)
+        temp_data = r.json()['main'] #temperature data
+        weather_data = r.json()['weather'][0] #weather data
+
+        degree_sign = u'\N{DEGREE SIGN}'
+        print('temp_max:', temp_data['temp_max'], degree_sign, 'F')
+        print('temp_min:', temp_data['temp_min'], degree_sign, 'F')
+        print('description:', weather_data['description'])
         
-    #pprint(r.json())
+        
+        #pprint(r.json())
 
 ##        os.system("say -v " + event['summary'])
 
