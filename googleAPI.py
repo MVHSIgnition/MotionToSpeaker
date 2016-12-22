@@ -74,8 +74,8 @@ def main():
 
     endOfToday_utc = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(time.mktime(time.strptime(endOfToday, "%Y-%m-%dT%H:%M:%S")))) + 'Z'
     
-    print(now_utc)
-    print(endOfToday_utc)
+##    print(now_utc)
+##    print(endOfToday_utc)
     print("Getting today's events...")
     eventsResult = service.events().list(
         calendarId='primary', timeMin=now_utc, timeMax=endOfToday_utc, singleEvents=True,
@@ -102,7 +102,6 @@ def main():
         print('zipcode:', zipcode)
         print('city:', city)
         print('country:', country)
-        print('\n')
 
         try:
             r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=' + city + ',' + country + '&mode=json&units=imperial&appid=93e7e9c55f90dbee5bb418ca0c517d19')
@@ -130,6 +129,7 @@ def main():
         print('temp_max:', temp_data['temp_max'], degree_sign, 'F')
         print('temp_min:', temp_data['temp_min'], degree_sign, 'F')
         print('description:', weather_data['description'])
+        print('\n')
         
         
         #pprint(r.json())
