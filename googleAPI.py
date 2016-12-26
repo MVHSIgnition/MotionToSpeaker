@@ -136,16 +136,16 @@ def main():
 
 ##        os.system("say -v " + event['summary'])
         system('say Good morning. Today, according to your Google Calendar')
-        str = event['summary']
-        system('say %s' % (str))
+        str1 = event['summary']
+        system('say %s' % (str1))
         system('say is on your schedule today. The conditions there are')
-        str = weather_data['description']
-        system('say %s' %(str))
+        str1 = weather_data['description']
+        system('say %s' %(str1))
         system('say with a temperature of maximum')
-        str = temp_data['temp_max']
-        system('say %s' %(str))
+        str1 = temp_data['temp_max']
+        system('say %s' %(str1))
         system('say fahrenheit and a minimum temperature of')
-        str = temp_data['temp_min']
+        str1 = temp_data['temp_min']
         system('say fahrenheit')
 if __name__ == '__main__':
     main()
