@@ -3,7 +3,7 @@
 
 from __future__ import print_function
 import httplib2
-from os import system
+import os
 
 from apiclient import discovery
 from oauth2client import client
@@ -135,17 +135,17 @@ def main():
         #pprint(r.json())
 
 ##        os.system("say -v " + event['summary'])
-        system('say Good morning. Today, according to your Google Calendar')
+        os.system('say Good morning. Today, according to your Google Calendar')
         str = event['summary']
-        system('say %s' % (str))
-        system('say is on your schedule today. The conditions there are')
+        os.system('say %s' % (str))
+        os.system('say is on your schedule today. The conditions there are')
         str = weather_data['description']
-        system('say %s' %(str))
-        system('say with a temperature of maximum')
+        os.system('say %s' %(str))
+        os.system('say with a temperature of maximum')
         str = temp_data['temp_max']
-        system('say %s' %(str))
-        system('say fahrenheit and a minimum temperature of')
+        os.system('say %s' %(str))
+        os.system('say fahrenheit and a minimum temperature of')
         str = temp_data['temp_min']
-        system('say fahrenheit')
+        os.system('say fahrenheit')
 if __name__ == '__main__':
     main()
