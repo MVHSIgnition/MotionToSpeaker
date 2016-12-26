@@ -89,20 +89,28 @@ def main():
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date')).split('T')
         date = start[0]
-        event_time = start[1].split('-')[0]
+        try:
+            event_time = start[1].split('-')[0]
+            print('time:', event_time)
+        except:
+            pass
+            #print(event)
 ##        time = int(start[1].split('-')[0].split(':')[0])
 ##        time -= time % 3
-        zipcode = numbers.findall(event['location'])[-1] #find last number in the string (zipcode)
-        city = event['location'].split(',')[1].strip()
-        country = event['location'].split(',')[-1].strip() #find last
         
         print('title:', event['summary'])
         print('date:', date)
-        print('time:', event_time)
-        print('location:', event['location'])
-        print('zipcode:', zipcode)
-        print('city:', city)
-        print('country:', country)
+        
+        try:
+            zipcode = numbers.findall(event['location'])[-1] #find last number in the string (zipcode)
+            city = event['location'].split(',')[1].strip()
+            country = event['location'].split(',')[-1].strip() #find last
+            print('location:', event['location'])
+            print('zipcode:', zipcode)
+            print('city:', city)
+            print('country:', country)
+        except:
+            print('No Location Found.')
 
         try:
             r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=' + city + ',' + country + '&mode=json&units=imperial&appid=93e7e9c55f90dbee5bb418ca0c517d19')
