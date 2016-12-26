@@ -15,6 +15,7 @@ import time
 from pprint import pprint
 import requests 
 import re
+import os.path
 numbers = re.compile('\d+(?:\.\d+)?')
 
 try:
@@ -148,6 +149,8 @@ def main():
         s = temp_data['temp_min']
         os.system('say %s' %(s))
         os.system('say fahrenheit')
-
+while(1):
+    if(os.path.isfile("/home/pi/dev/rtl_433/gfile001.data")):
+        break
 if __name__ == '__main__':
     main()
