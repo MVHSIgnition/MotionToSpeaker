@@ -16,6 +16,8 @@ from pprint import pprint
 import requests 
 import re
 import os.path
+import sys
+import subprocess
 numbers = re.compile('\d+(?:\.\d+)?')
 
 try:
@@ -33,10 +35,8 @@ APPLICATION_NAME = 'Google Calendar API Python Quickstart'
 
 def get_credentials():
     """Gets valid user credentials from storage.
-
     If nothing has been stored, or if the stored credentials are invalid,
     the OAuth2 flow is completed to obtain the new credentials.
-
     Returns:
         Credentials, the obtained credential.
     """
@@ -61,7 +61,6 @@ def get_credentials():
 
 def main():
     """Shows basic usage of the Google Calendar API.
-
     Creates a Google Calendar API service object and outputs a list of the next
     10 events on the user's calendar.
     """
@@ -144,21 +143,32 @@ def main():
         #pprint(r.json())
 
 ##        os.system("say -v " + event['summary'])
-        os.system('say Good morning. Today, according to your Google Calendar')
+        os.system('pico2wave -w say.wav "Good morning. Today, according to your Google Calendar"')
+        os.system('aplay say.wav')
         s = event['summary']
-        os.system('say %s' % (s))
-        os.system('say is on your schedule today. The conditions there are')
+        os.system('pico2wave -w say.wav "%s"'%(s))
+        os.system('aplay say.wav')
+        os.system('pico2wave -w say.wav "is on your schedule today. The conditions there are"')
+        os.system('aplay say.wav')
         s = weather_data['description']
-        os.system('say %s' %(s))
-        os.system('say with a temperature of maximum')
+        os.system('pico2wave -w say.wav "%s"'%(s))
+        os.system('aplay say.wav')
+        os.system('pico2wave -w say.wav "with a temperature of maximum"')
+        os.system('aplay say.wav')
         s = temp_data['temp_max']
-        os.system('say %s' %(s))
-        os.system('say fahrenheit and a minimum temperature of')
+        os.system('pico2wave -w say.wav "%s"'%(s))
+        os.system('aplay say.wav')
+        os.system('pico2wave -w say.wav "Fahrenheit and a minimum temperature of"')
+        os.system('aplay say.wav')
         s = temp_data['temp_min']
-        os.system('say %s' %(s))
-        os.system('say fahrenheit')
-while(1):
-    if(os.path.isfile("/home/pi/dev/rtl_433/gfile001.data")):
-        break
+        os.system('pico2wave -w say.wav "%s"'%(s))
+        os.system('aplay say.wav')
+        os.system('pico2wave -w say.wav "Fahrenheit"')
+        os.system('aplay say.wav')
 if __name__ == '__main__':
-    main()
+    while(1):
+        if(os.path.isfile("/home/pi/dev/rtl_433/gfile001.data")):
+            os.system('rm /home/pi/dev/rtl_433/gfile001.data')
+            main()
+            break
+            
