@@ -148,7 +148,7 @@ def main():
         s = event['summary']
         os.system('pico2wave -w say.wav "%s"'%(s))
         os.system('aplay say.wav')
-        os.system('pico2wave -w say.wav "is on your schedule today. The conditions there are"')
+        os.system('pico2wave -w say.wav "is on your schedule today. The weather conditions there are"')
         os.system('aplay say.wav')
         s = weather_data['description']
         os.system('pico2wave -w say.wav "%s"'%(s))
@@ -164,6 +164,8 @@ def main():
         os.system('pico2wave -w say.wav "%s"'%(s))
         os.system('aplay say.wav')
         os.system('pico2wave -w say.wav "Fahrenheit"')
+        os.system('aplay say.wav')
+        os.system('pico2wave -w say.wav "Have a good day!"')
         os.system('aplay say.wav')
 if __name__ == '__main__':
     while(1):
