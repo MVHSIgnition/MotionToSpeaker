@@ -83,9 +83,11 @@ def main():
     #pprint(eventsResult)
     events = eventsResult.get('items', [])
 
+    s = "Good morning."
     if not events:
         print('No upcoming events found.')
-    for event in events:
+        s += "You have no events scheduled today on your Google Calendar"
+    for i, event in enumerate(events):
         start = event['start'].get('dateTime', event['start'].get('date')).split('T')
         date = start[0]
         try:
@@ -139,34 +141,17 @@ def main():
         print('description:', weather_data['description'])
         print('\n')
         
-        
         #pprint(r.json())
-
-##        os.system("say -v " + event['summary'])
-        os.system('pico2wave -w say.wav "Good morning. Today, according to your Google Calendar"')
-        os.system('aplay say.wav')
-        s = event['summary']
-        os.system('pico2wave -w say.wav "%s"'%(s))
-        os.system('aplay say.wav')
-        os.system('pico2wave -w say.wav "is on your schedule today. The weather conditions there are"')
-        os.system('aplay say.wav')
-        s = weather_data['description']
-        os.system('pico2wave -w say.wav "%s"'%(s))
-        os.system('aplay say.wav')
-        os.system('pico2wave -w say.wav "with a temperature of maximum"')
-        os.system('aplay say.wav')
-        s = temp_data['temp_max']
-        os.system('pico2wave -w say.wav "%s"'%(s))
-        os.system('aplay say.wav')
-        os.system('pico2wave -w say.wav "Fahrenheit and a minimum temperature of"')
-        os.system('aplay say.wav')
-        s = temp_data['temp_min']
-        os.system('pico2wave -w say.wav "%s"'%(s))
-        os.system('aplay say.wav')
-        os.system('pico2wave -w say.wav "Fahrenheit"')
-        os.system('aplay say.wav')
-        os.system('pico2wave -w say.wav "Have a good day!"')
-        os.system('aplay say.wav')
+        if i == 0:
+            s += "Today, according to your Google Calendar, %s is on your schedule today." % (event['summary'])
+        else:
+            s += "%s is also on your schedule." % (event['summary'])
+            
+        s += "The weather conditions there will be %s, with a maximum temperature of %s degrees Fahrenheit and a minimum temperature of %s degrees Fahrenheit." % (weather_data['description'], temp_data['temp_max'], temp_data['temp_min'])
+    
+    s += "Have a nice day!"
+    os.system('pico2wave -w say.wav "' + s + '" && aplay say.wav')
+        
 if __name__ == '__main__':
     while(1):
         if(os.path.isfile("/home/pi/dev/rtl_433/gfile001.data")):
