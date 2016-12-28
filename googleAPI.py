@@ -17,7 +17,6 @@ import requests
 import re
 import os.path
 import sys
-import subprocess
 numbers = re.compile('\d+(?:\.\d+)?')
 
 try:
@@ -83,10 +82,10 @@ def main():
     #pprint(eventsResult)
     events = eventsResult.get('items', [])
 
-    s = "Good morning."
+    s = "Good morning. "
     if not events:
         print('No upcoming events found.')
-        s += "You have no events scheduled today on your Google Calendar"
+        s += "You have no events scheduled today on your Google Calendar. "
     for i, event in enumerate(events):
         start = event['start'].get('dateTime', event['start'].get('date')).split('T')
         date = start[0]
@@ -94,7 +93,7 @@ def main():
             event_time = start[1].split('-')[0]
             print('time:', event_time)
         except:
-            pass
+            event_time = None
             #print(event)
 ##        time = int(start[1].split('-')[0].split(':')[0])
 ##        time -= time % 3
@@ -112,6 +111,9 @@ def main():
             print('country:', country)
         except:
             print('No Location Found.')
+            zipcode = None
+            city = None
+            country = None
 
         try:
             r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=' + city + ',' + country + '&mode=json&units=imperial&appid=93e7e9c55f90dbee5bb418ca0c517d19')
@@ -120,36 +122,38 @@ def main():
                 r = requests.get('http://api.openweathermap.org/data/2.5/weather?zip=' + zipcode + ',' + country + '&mode=json&units=imperial&appid=93e7e9c55f90dbee5bb418ca0c517d19')
             except:
                 print('Error loading weather data!')
-                continue
+                r = None
+                temp_data = None
+                weather_data = None
+        
+        if r:
+            temp_data = r.json()['main'] #temperature data
+            weather_data = r.json()['weather'][0] #weather data
 
-        #below is if url is "data/2.5/forecast?" (forecasted data, can get for specific times in the future)
-##        weather_data = r.json().get('list')
-##        for d in weather_data:
-##            if str(time) in d['dt_txt']: #fix because only does the most recent date
-##                print(d['dt_txt'])
-##                print('temp_max:', d['main']['temp_max'])
-##                print('temp_min:', d['main']['temp_min'])
-##                break
-
-        #below is if url is "data/2.5/weather?" (current data)
-        temp_data = r.json()['main'] #temperature data
-        weather_data = r.json()['weather'][0] #weather data
-
-        degree_sign = u'\N{DEGREE SIGN}'
-        print('temp_max:', temp_data['temp_max'], degree_sign, 'F')
-        print('temp_min:', temp_data['temp_min'], degree_sign, 'F')
-        print('description:', weather_data['description'])
-        print('\n')
+            degree_sign = u'\N{DEGREE SIGN}'
+            print('temp_max:', temp_data['temp_max'], degree_sign, 'F')
+            print('temp_min:', temp_data['temp_min'], degree_sign, 'F')
+            print('description:', weather_data['description'])
+            print('\n')
         
         #pprint(r.json())
         if i == 0:
-            s += "Today, according to your Google Calendar, %s is on your schedule today." % (event['summary'])
+            s += "Today, according to your Google Calendar, %s is on your schedule" % (event['summary'])
         else:
-            s += "%s is also on your schedule." % (event['summary'])
-            
-        s += "The weather conditions there will be %s, with a maximum temperature of %s degrees Fahrenheit and a minimum temperature of %s degrees Fahrenheit." % (weather_data['description'], temp_data['temp_max'], temp_data['temp_min'])
+            s += "%s is also on your schedule today" % (event['summary'])
+
+        if event_time: 
+            s += " at %s%s%s%s. " % (event_time.split(':')[0] if int(event_time.split(':')[0]) < 13 else str(int(event_time.split(':')[0]) - 12), ':' + event_time.split(':')[1] if event_time.split(':')[1] != '00' else ' o\'clock', ' am' if int(event_time.split(':')[0]) < 13 else ' pm', ' in ' + city if city else "")
+        else:
+            s += ". "
+
+        if r:
+            s += "The weather conditions there will be %s, with a maximum temperature of %s degrees Fahrenheit and a minimum temperature of %s degrees Fahrenheit. " % (weather_data['description'], temp_data['temp_max'], temp_data['temp_min'])
+        else:
+            s += "Weather could not be found for this event. "
     
     s += "Have a nice day!"
+    print(s)
     os.system('pico2wave -w say.wav "' + s + '" && aplay say.wav')
         
 if __name__ == '__main__':
@@ -158,4 +162,3 @@ if __name__ == '__main__':
             os.system('rm /home/pi/dev/rtl_433/gfile001.data')
             main()
             break
-            
