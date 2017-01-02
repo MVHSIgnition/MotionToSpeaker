@@ -1,6 +1,11 @@
 #IMPORTANT: Need to run "pip install --upgrade google-api-python-client"
 #           To get all the required modules
 
+#TO MODIFY:
+#EDIT the main() function by:
+#   s += "something" - adds something for the program to "say"
+#   referencing the google calendar event dictionary (event), or the weather dictionary (r.json())
+
 from __future__ import print_function
 import httplib2
 import os
@@ -136,6 +141,8 @@ def main():
             print('description:', weather_data['description'])
             print('\n')
         
+        #UNCOMMENT BELOW if you want to view the dictionaries referenced above
+        #pprint(event)
         #pprint(r.json())
         if i == 0:
             s += "Today, according to your Google Calendar, %s is on your schedule" % (event['summary'])
